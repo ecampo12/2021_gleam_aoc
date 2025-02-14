@@ -10,7 +10,7 @@ fi
 project=$(printf "day%02d" $1)
 
 # year variable is the current year
-year=9999
+year=2021
 
 # get session cookie from file if .session exists
 if [[ -f ".session" ]]; then

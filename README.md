@@ -1,10 +1,10 @@
-# My solutions for the Advent of Code 20xx puzzles
+# My solutions for the Advent of Code 2021 puzzles
 
-I travel back in time to 20xx to solve the puzzles from the [Advent of Code](https://adventofcode.com/20xx) event.
+I travel back in time to 2021 to solve the puzzles from the [Advent of Code](https://adventofcode.com/2021) event.
 
 Just my attempts at solving the puzzles, not necessarily the best solutions.
 
-check out the puzzles at [adventofcode.com](https://adventofcode.com/20xx)
+check out the puzzles at [adventofcode.com](https://adventofcode.com/2021)
 
 ## **Note**
 
