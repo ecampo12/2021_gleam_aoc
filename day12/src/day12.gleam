@@ -25,31 +25,36 @@ fn build_graph(input: String) -> Dict(String, List(String)) {
   })
 }
 
-fn is_lower_case(str: String) -> Bool {
-  string.lowercase(str) == str
-}
-
 fn traverse(
   graph: Dict(String, List(String)),
   node: String,
   small_caves: Set(String),
   trail: List(String),
   all_trails: Set(List(String)),
+  repeat: Bool,
 ) -> Set(List(String)) {
   case node {
     "end" -> set.insert(all_trails, trail)
     _ -> {
-      let next_nodes = dict.get(graph, node) |> result.unwrap([])
-      list.fold(next_nodes, all_trails, fn(acc, next_node) {
+      dict.get(graph, node)
+      |> result.unwrap([])
+      |> list.fold(all_trails, fn(acc, next_node) {
         case set.contains(small_caves, next_node) {
-          True -> acc
+          True -> {
+            case repeat && next_node != "start" {
+              True -> {
+                [next_node, ..trail]
+                |> traverse(graph, next_node, small_caves, _, acc, False)
+              }
+              False -> acc
+            }
+          }
           False -> {
-            let next_trail = [next_node, ..trail]
-            let update_caves = case is_lower_case(next_node) {
+            case string.lowercase(next_node) == next_node {
               True -> set.insert(small_caves, next_node)
               False -> small_caves
             }
-            traverse(graph, next_node, update_caves, next_trail, acc)
+            |> traverse(graph, next_node, _, [next_node, ..trail], acc, repeat)
           }
         }
       })
@@ -59,13 +64,26 @@ fn traverse(
 
 pub fn part1(input: String) -> Int {
   build_graph(input)
-  |> traverse("start", set.new() |> set.insert("start"), ["start"], set.new())
-  |> set.to_list
-  |> list.length
+  |> traverse(
+    "start",
+    set.new() |> set.insert("start"),
+    ["start"],
+    set.new(),
+    False,
+  )
+  |> set.size
 }
 
 pub fn part2(input: String) -> Int {
-  todo
+  build_graph(input)
+  |> traverse(
+    "start",
+    set.new() |> set.insert("start"),
+    ["start"],
+    set.new(),
+    True,
+  )
+  |> set.size
 }
 
 pub fn main() {

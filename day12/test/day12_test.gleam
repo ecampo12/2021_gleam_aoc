@@ -7,19 +7,20 @@ pub fn main() {
   gleeunit.main()
 }
 
-const tests = [
-  #(
-    "start-A
+pub fn part1_test() {
+  let tests = [
+    #(
+      "start-A
 start-b
 A-c
 A-b
 b-d
 A-end
 b-end",
-    10,
-  ),
-  #(
-    "dc-end
+      10,
+    ),
+    #(
+      "dc-end
 HN-start
 start-kj
 dc-start
@@ -29,10 +30,10 @@ HN-end
 kj-sa
 kj-HN
 kj-dc",
-    19,
-  ),
-  #(
-    "fs-end
+      19,
+    ),
+    #(
+      "fs-end
 he-DX
 fs-he
 start-DX
@@ -50,14 +51,58 @@ he-WI
 zg-he
 pj-fs
 start-RW",
-    226,
-  ),
-]
-
-pub fn part1_test() {
+      226,
+    ),
+  ]
   list.map(tests, fn(x) { part1(x.0) |> should.equal(x.1) })
 }
 
 pub fn part2_test() {
-  todo
+  let tests = [
+    #(
+      "start-A
+start-b
+A-c
+A-b
+b-d
+A-end
+b-end",
+      36,
+    ),
+    #(
+      "dc-end
+HN-start
+start-kj
+dc-start
+dc-HN
+LN-dc
+HN-end
+kj-sa
+kj-HN
+kj-dc",
+      103,
+    ),
+    #(
+      "fs-end
+he-DX
+fs-he
+start-DX
+pj-DX
+end-zg
+zg-sl
+zg-pj
+pj-he
+RW-he
+fs-DX
+pj-RW
+zg-RW
+start-pj
+he-WI
+zg-he
+pj-fs
+start-RW",
+      3509,
+    ),
+  ]
+  list.map(tests, fn(x) { part2(x.0) |> should.equal(x.1) })
 }
