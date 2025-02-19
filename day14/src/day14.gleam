@@ -5,6 +5,7 @@ import gleam/list
 import gleam/option.{None, Some}
 import gleam/result
 import gleam/string
+import rememo/memo
 import simplifile.{read}
 
 fn parse(input: String) -> #(String, Dict(String, String)) {
@@ -45,43 +46,36 @@ fn counter_merge(
 }
 
 // needed to add memoization to greatly speed up the solution.
-// I'm looking into gleam libraries to make memoization easier.
+// rememo is a Gleam library that provides a simple API for memoization.
+// Its way faster and simpler than my previous solution.
 fn synthesize(
   rules: Dict(String, String),
   a: String,
   b: String,
   depth: Int,
-  memo: Dict(#(String, String, Int), Dict(String, Int)),
-) -> #(Dict(String, Int), Dict(#(String, String, Int), Dict(String, Int))) {
-  case dict.has_key(memo, #(a, b, depth)) {
-    True -> #(dict.get(memo, #(a, b, depth)) |> result.unwrap(dict.new()), memo)
-    False ->
-      case depth == 0 {
-        True -> #(counter(""), memo)
-        False -> {
-          let x = dict.get(rules, a <> b) |> result.unwrap("")
-          let left = synthesize(rules, a, x, depth - 1, memo)
-          let update_memo = dict.insert(left.1, #(a, x, depth - 1), left.0)
-
-          let right = synthesize(rules, x, b, depth - 1, update_memo)
-          let update_memo2 = dict.insert(right.1, #(x, b, depth - 1), right.0)
-          #(
-            counter(x) |> counter_merge(left.0) |> counter_merge(right.0),
-            update_memo2,
-          )
-        }
-      }
+  cache,
+) -> Dict(String, Int) {
+  use <- memo.memoize(cache, #(a, b, depth))
+  case depth == 0 {
+    True -> counter("")
+    False -> {
+      let x = dict.get(rules, a <> b) |> result.unwrap("")
+      counter(x)
+      |> counter_merge(synthesize(rules, a, x, depth - 1, cache))
+      |> counter_merge(synthesize(rules, x, b, depth - 1, cache))
+    }
   }
 }
 
 pub fn part1(input: String) -> Int {
+  use cache <- memo.create()
   let #(template, rules) = parse(input)
   let count =
     string.to_graphemes(template)
     |> list.window_by_2
     |> list.fold(counter(template), fn(acc, pair) {
-      let x = synthesize(rules, pair.0, pair.1, 10, dict.new())
-      counter_merge(acc, x.0)
+      synthesize(rules, pair.0, pair.1, 10, cache)
+      |> counter_merge(acc)
     })
     |> dict.values
     |> list.sort(int.compare)
@@ -91,13 +85,14 @@ pub fn part1(input: String) -> Int {
 }
 
 pub fn part2(input: String) -> Int {
+  use cache <- memo.create()
   let #(template, rules) = parse(input)
   let count =
     string.to_graphemes(template)
     |> list.window_by_2
     |> list.fold(counter(template), fn(acc, pair) {
-      let x = synthesize(rules, pair.0, pair.1, 40, dict.new())
-      counter_merge(acc, x.0)
+      synthesize(rules, pair.0, pair.1, 40, cache)
+      |> counter_merge(acc)
     })
     |> dict.values
     |> list.sort(int.compare)
