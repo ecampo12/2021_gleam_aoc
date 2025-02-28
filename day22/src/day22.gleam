@@ -67,16 +67,18 @@ fn min(c: Cuboid) -> Int {
   })
 }
 
-pub fn part1(input: String) -> Int {
-  parse(input)
-  |> list.fold(dict.new(), fn(acc, c) {
+// Pretty much the solution for part1 and part2 are the same except for the condition.
+// We stuck with expressing cuboids in ranges instead of expanding them into individual 
+// points. This is a classic Advent of Code problem, never expand the ranges.
+fn reboot_process(cuboids: List(#(Cuboid, Int)), part1: Bool) -> Int {
+  list.fold(cuboids, dict.new(), fn(acc, c) {
     let #(volume1, v) = c
-    case max(volume1) > 50 || min(volume1) < -50 {
+    case part1 && { max(volume1) > 50 || min(volume1) < -50 } {
       True -> acc
       False -> {
         let update =
-          dict.fold(acc, dict.new(), fn(bcc, cubes, count) {
-            case intersect(volume1, cubes) {
+          dict.fold(acc, dict.new(), fn(bcc, volume2, count) {
+            case intersect(volume1, volume2) {
               Error(_) -> bcc
               Ok(newcube) -> {
                 dict.upsert(bcc, newcube, fn(x) {
@@ -105,8 +107,14 @@ pub fn part1(input: String) -> Int {
   |> dict.fold(0, fn(acc, k, v) { acc + size(k) * v })
 }
 
+pub fn part1(input: String) -> Int {
+  parse(input)
+  |> reboot_process(True)
+}
+
 pub fn part2(input: String) -> Int {
-  todo
+  parse(input)
+  |> reboot_process(False)
 }
 
 pub fn main() {

@@ -1,6 +1,7 @@
 import day22.{part1, part2}
 import gleeunit
 import gleeunit/should
+import simplifile
 
 pub fn main() {
   gleeunit.main()
@@ -38,6 +39,8 @@ pub fn part1_test() {
   part1(input) |> should.equal(39)
   part1(large_input) |> should.equal(590_784)
 }
-// pub fn part2_test() {
-//   todo
-// }
+
+pub fn part2_test() {
+  let assert Ok(input) = simplifile.read("test/extra_large_input.txt")
+  part2(input) |> should.equal(2_758_514_936_282_235)
+}
