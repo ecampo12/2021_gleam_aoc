@@ -32,19 +32,15 @@ fn get_relevant_adds(
         let assert Ok(n) = list.drop(val, 2) |> list.first
         let num = int.parse(n)
         #(list.append(acc.0, [num]), list.append(acc.1, [Error(Nil)]))
-        // acc
       }
       False -> {
         let assert Ok(val) = dict.get(instructions, x + 5)
         let assert Ok(n) = list.drop(val, 2) |> list.first
         let num = int.parse(n)
         #(list.append(acc.0, [Error(Nil)]), list.append(acc.1, [num]))
-        // acc
       }
     }
-    // acc
   })
-  // #([], [])
 }
 
 fn get_model_number(
@@ -68,11 +64,6 @@ fn get_model_number(
           let assert Ok(num1) = a
           let assert Ok(num2) = b
           let diff = num1 + num2
-          io.debug(#(num1, num2, diff))
-          // io.debug(
-          //   "a: " <> int.to_string(num1) <> " b: " <> int.to_string(num2),
-          // )
-          // io.debug(diff)
           let update_number =
             dict.insert(num, index, int.min(9, 9 - diff))
             |> dict.insert(i, int.min(9, 9 + diff))
@@ -82,9 +73,6 @@ fn get_model_number(
     })
   dict.values(res) |> io.debug
 }
-
-// 95469986990928
-// 91699394894995
 
 pub fn part1(input: String) -> Int {
   let #(div1, dicv26) = parse(input) |> get_relevant_adds
